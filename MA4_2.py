@@ -62,14 +62,15 @@ def time47():
 	t2 = pc()
 	print(f'numba: {fib_numba(x)}')
 	t3 = pc()
-
 	print(f'C++: {round(t2-t1,4)}')
 	print(f'Numba:{round(t3-t2,4)}')
 
 def main():
-	graph(20,30)
+	graph(20,31)
 	time47()
-	graph(30,45)
+	graph(30,46)
+	for i in x:
+		print(i)
 
 if __name__ == '__main__':
 	main()
