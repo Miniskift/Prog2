@@ -4,7 +4,7 @@
 class Person{
 	public:
 		Person(int);
-		int get();
+		int getAge();
 		void setAge(int);
 		double getDecades();
 		int fib();
