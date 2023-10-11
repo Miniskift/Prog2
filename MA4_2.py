@@ -31,6 +31,7 @@ def graph(q,w):
 	y_py = []
 
 	for i in x:
+		print(i)
 		t1 = pc()
 		f = Person(i)
 		f.fib()
@@ -69,8 +70,6 @@ def main():
 	graph(20,31)
 	time47()
 	graph(30,46)
-	for i in x:
-		print(i)
 
 if __name__ == '__main__':
 	main()
