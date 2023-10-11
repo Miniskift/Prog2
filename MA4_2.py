@@ -11,8 +11,6 @@ import concurrent.futures as future
 import numpy as np
 from numba import njit
 
-@njit
-
 def fib_py(n):
 	if n <= 1:
 		return n
