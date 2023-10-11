@@ -5,23 +5,38 @@ class Person{
 	public:
 		Person(int);
 		int get();
-		void set(int);
+		void setAge(int);
+		double getDecades();
+		int fib();
 	private:
 		int age;
+		int fib_helpf(int);
 	};
  
-Person::Person(int n){
-	age = n;
+Person::Person(int a){
+	age = a;
 	}
- 
-int Person::get(){
+
+int Person::fib(){
+	return fib_helpf(getAge());
+}
+
+int Person::fib_helpf(int n){
+	if(n<=1){return n;}
+	return fib_helpf(n-1) + fib_helpf(n-2)
+}
+
+int Person::getAge(){
 	return age;
 	}
  
-void Person::set(int n){
-	age = n;
+void Person::setAge(int a){
+	age = a;
 	}
 
+double Person::getDecades(){
+	return age/10.0;
+}
 
 extern "C"{
 	Person* Person_new(int n) {return new Person(n);}
