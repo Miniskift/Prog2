@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import math
 import concurrent.futures as future
 import time
-
+#sss
 def less_than_one(num):
     if (num>1):
         return False
