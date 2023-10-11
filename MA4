@@ -1,0 +1,148 @@
+import random
+import matplotlib.pyplot as plt
+import math
+import concurrent.futures as future
+import time
+
+def less_than_one(num):
+    if (num>1):
+        return False
+    else:
+        return True
+
+
+def monte_carlo_pi(n):
+    nc=0
+    # Listor för att spara x- och y-koordinater för punkterna inuti respektive utanför cirkeln
+    x_inside = []
+    y_inside = []
+    x_outside = []
+    y_outside = []
+
+    for i in range(n):
+        x = random.uniform(-1, 1)
+        y = random.uniform(-1, 1)
+        distance = (pow(x,2) + pow(y,2))
+
+        if distance <= 1:
+            nc += 1
+            x_inside.append(x)
+            y_inside.append(y)
+        else:
+            x_outside.append(x)
+            y_outside.append(y)
+
+    pi_estimate = 4*nc/n
+    # print("1. Number of points inside the circle " + str(nc))
+    # print("2. Estimated value of pi: " + str({pi_estimate}))
+    # print("3. Built-in value of pi (math.pi): " + str({math.pi}))
+        
+    return x_inside, y_inside, x_outside, y_outside   
+
+def monte_carlo_sfar(n,d):
+    p = lambda x : pow(x,2) #Lambda is higher order function one
+    point_list = [[p(random.uniform(-1,1)) for ii in range(d)] for jj in range(n)] #list comprehension is higher order function two
+    point_list_squared = list(map(sum, point_list)) #map i higher order function three
+    point_list_squared_inside = list(filter(less_than_one, point_list_squared)) #filter is higher order function four
+    return pow(2,d) * len(point_list_squared_inside)/n
+
+def multi_monte_carlo_sfar(n,d):
+    n_list = [int(n/10)]*10
+    d_list = [d]*10
+    with future.ProcessPoolExecutor() as ex:
+        result = ex.map(_multi_monte_carlo_sfar, n_list, d_list)
+    return sum(result)/n
+
+def _multi_monte_carlo_sfar(n,d):
+    p = lambda x : pow(x,2) 
+    point_list = [[p(random.uniform(-1,1)) for ii in range(d)] for jj in range(n)] 
+    point_list_squared = list(map(sum, point_list))
+    point_list_squared_inside = list(filter(less_than_one, point_list_squared))
+    return pow(2,d) * len(point_list_squared_inside)/n
+
+if __name__ == "__main__":
+    #n = int(input("Enter the number of random samples: "))
+
+    n = 1000
+    x_inside, y_inside, x_outside, y_outside = monte_carlo_pi(n)
+    print()
+    print(f"Number of points inside the circle: nc = {len(x_inside)}, with total amount of points {n}")
+    print(f"Approximation of pi from Monte Carlo method, with n = {n}: pi = {4 * len(x_inside) / n}")
+    fig, ax = plt.subplots(1)
+    ax.set_aspect('equal')
+    ax.scatter(x_inside, y_inside, c='r')
+    ax.scatter(x_outside, y_outside, c='b')
+    ax.set_title(f"Plot with n = {n}")
+    fig.savefig(f'pi_{n}_points.png')
+
+    n = 10000
+    x_inside, y_inside, x_outside, y_outside = monte_carlo_pi(n)
+    print()
+    print(f"Number of points inside the circle: nc = {len(x_inside)}, with total amount of points {n}")
+    print(f"Approximation of pi from Monte Carlo method, with n = {n}: pi = {4 * len(x_inside) / n}")
+    fig, ax = plt.subplots(1)
+    ax.set_aspect('equal')
+    ax.scatter(x_inside, y_inside, c='r')
+    ax.scatter(x_outside, y_outside, c='b')
+    ax.set_title(f"Plot with n = {n}")
+    fig.savefig(f'pi_{n}_points.png')
+    
+    n = 100000
+    x_inside, y_inside, x_outside, y_outside = monte_carlo_pi(n)
+    print()
+    print(f"Number of points inside the circle: nc = {len(x_inside)}, with total amount of points {n}")
+    print(f"Approximation of pi from Monte Carlo method, with n = {n}: pi = {4 * len(x_inside) / n}")
+    fig, ax = plt.subplots(1)
+    ax.set_aspect('equal')
+    ax.scatter(x_inside, y_inside, c='r')
+    ax.scatter(x_outside, y_outside, c='b')
+    ax.set_title(f"Plot with n = {n}")
+    fig.savefig(f'pi_{n}_points.png')
+    
+    print()
+    n = 100000
+    d = 2
+    calculated_volume = monte_carlo_sfar(n,d)
+    theroetical_volume = pow(math.pi, d/2) * pow(1,d)/math.gamma(1+(d/2))
+    print(f'Theroetical volume of d-dimensional sphere with radius 1 and {d} dimensions is: V = {theroetical_volume}')
+    print(f'Calculated volume of d-dimensional sphere with radius 1 and {d} dimensions, using n = {n} points, is: V = {calculated_volume}')
+
+    print()
+    n = 100000
+    d = 11
+    calculated_volume = monte_carlo_sfar(n,d)
+    theroetical_volume = pow(math.pi, d/2) * pow(1,d)/math.gamma(1+(d/2))
+    print(f'Theroetical volume of d-dimensional sphere with radius 1 and {d} dimensions is: V = {theroetical_volume}')
+    print(f'Calculated volume of d-dimensional sphere with radius 1 and {d} dimensions, using n = {n} points, is: V = {calculated_volume}')
+
+    print()
+    t_start1 = time.perf_counter()
+    calculated_volume = monte_carlo_sfar(1000000,11)
+    t_stop1 = time.perf_counter()
+    print(f'Measured time for code from 1.2 with (n,d) = (1000000,11) is: {t_stop1-t_start1} seconds')
+
+    print()
+    t_start2 = time.perf_counter()
+    calculated_volume = multi_monte_carlo_sfar(1000000,11)
+    t_stop2 = time.perf_counter()
+    print(f'Measured time for code 1.2 with multi and (n,d) = (1000000,11) is: {t_stop2 -t_start2} seconds')
+
+# Number of points inside the circle: nc = 800, with total amount of points 1000
+# Approximation of pi from Monte Carlo method, with n = 1000: pi = 3.2
+
+# Number of points inside the circle: nc = 7903, with total amount of points 10000
+# Approximation of pi from Monte Carlo method, with n = 10000: pi = 3.1612
+
+# Number of points inside the circle: nc = 78395, with total amount of points 100000
+# Approximation of pi from Monte Carlo method, with n = 100000: pi = 3.1358
+
+# Theroetical volume of d-dimensional sphere with radius 1 and 2 dimensions is: V = 3.141592653589793
+# Calculated volume of d-dimensional sphere with radius 1 and 2 dimensions, using n = 100000 points, is: V = 3.14476
+
+# Theroetical volume of d-dimensional sphere with radius 1 and 11 dimensions is: V = 1.8841038793898994
+# Calculated volume of d-dimensional sphere with radius 1 and 11 dimensions, using n = 100000 points, is: V = 1.39264
+
+# Measured time for code from 1.2 with (n,d) = (1000000,11) is: 5.092043399985414 seconds
+
+# Measured time for code 1.2 with multi and (n,d) = (1000000,11) is: 2.7311491000000387 seconds
+# PS C:\Users\Hampus\Python> 
