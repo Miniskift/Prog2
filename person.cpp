@@ -43,7 +43,7 @@ extern "C"{
 	int Person_fib(Person* person) {return person->fib();}
 	int Person_getAge(Person* person) {return person->getAge();}
 	void Person_setAge(Person* person, int a) {person->setAge(a);}
-	double Person_getDecades(person* person) {return person->getDecades();}
+	double Person_getDecades(Person* person) {return person->getDecades();}
 	void Person_delete(Person* person){
 		if (person){
 			delete person;
